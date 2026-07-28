@@ -3,8 +3,7 @@ name: Auto Build Executables
 on:
   push:
     branches: [ "SimpAI" ]
-  # 建议加上 workflow_dispatch，这样可以在 GitHub 网页端手动点击运行测试
-  workflow_dispatch:
+  workflow_dispatch:  # 允许手动触发，方便测试
 
 jobs:
   build:
@@ -29,10 +28,12 @@ jobs:
         pip install -r requirements.txt
         pip install pyinstaller
 
+    # 修改处：加了 --onefile，让 Windows 打包成单文件 exe
     - name: Build with PyInstaller (Windows)
       if: matrix.os == 'windows-latest'
-      run: pyinstaller --windowed --noconfirm --name "SD Prompt Reader" main.py
+      run: pyinstaller --onefile --windowed --noconfirm --name "SD Prompt Reader" main.py
 
+    # macOS 保持原样，因为它需要打包成 .app 文件夹
     - name: Build with PyInstaller (macOS)
       if: matrix.os == 'macos-latest'
       run: pyinstaller --windowed --noconfirm --name "SD Prompt Reader" main.py
@@ -48,7 +49,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: SD-Prompt-Reader-Windows
-        path: "dist/SD Prompt Reader.exe"  # 加了引号，防止空格导致路径找不到
+        path: "dist/SD Prompt Reader.exe"
 
     - name: Upload Artifact (macOS)
       if: matrix.os == 'macos-latest'
