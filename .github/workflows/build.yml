@@ -1,8 +1,9 @@
 name: Auto Build Executables
 
-# 触发条件：允许我们在 GitHub 网页上手动点击按钮触发打包
+# 触发条件：储存即刻触发
 on:
-  workflow_dispatch: 
+  push:
+    branches: [ "SimpAI" ]
 
 jobs:
   build:
