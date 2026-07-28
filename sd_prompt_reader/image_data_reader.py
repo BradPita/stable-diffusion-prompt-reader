@@ -23,6 +23,7 @@ from .format import (
     DrawThings,
     SwarmUI,
     Fooocus,
+    SimpAI, # [SimpAI 修改注记 1]: 导入你新建的 SimpAI 模块
 )
 
 
@@ -210,10 +211,15 @@ class ImageDataReader:
                                     self._raw = piexif.helper.UserComment.load(
                                         user_comment
                                     )
-                                    # easydiff jpeg and webp format
+                                    # [SimpAI 修改注记 2]: 在这里拦截 JSON 并区分 simpAI 和 Easy Diffusion
                                     if self._raw[0] == "{":
-                                        self._tool = "Easy Diffusion"
-                                        self._parser = EasyDiffusion(raw=self._raw)
+                                        if "SimpleAI Regen Manifest" in self._raw or "SimpAI" in self._raw:
+                                            self._tool = "simpAI"
+                                            # 为了兼容你编写的 simpai.py 逻辑，将解出来的 _raw 包进 info 字典里
+                                            self._parser = SimpAI(info={"UserComment": self._raw})
+                                        else:
+                                            self._tool = "Easy Diffusion"
+                                            self._parser = EasyDiffusion(raw=self._raw)
                                     # a1111 jpeg and webp format
                                     else:
                                         self._tool = "A1111 webUI"
