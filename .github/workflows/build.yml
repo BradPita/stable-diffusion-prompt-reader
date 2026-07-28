@@ -28,15 +28,15 @@ jobs:
         pip install -r requirements.txt
         pip install pyinstaller
 
-    # 修改处：加了 --onefile，让 Windows 打包成单文件 exe
+    # 修改处：加了 --add-data，把 resources 文件夹打包进去（Windows 用分号 ;）
     - name: Build with PyInstaller (Windows)
       if: matrix.os == 'windows-latest'
-      run: pyinstaller --onefile --windowed --noconfirm --name "SD Prompt Reader" main.py
+      run: pyinstaller --onefile --windowed --noconfirm --name "SD Prompt Reader" --add-data "sd_prompt_reader/resources;sd_prompt_reader/resources" main.py
 
-    # macOS 保持原样，因为它需要打包成 .app 文件夹
+    # 修改处：加了 --add-data，把 resources 文件夹打包进去（macOS 用冒号 :）
     - name: Build with PyInstaller (macOS)
       if: matrix.os == 'macos-latest'
-      run: pyinstaller --windowed --noconfirm --name "SD Prompt Reader" main.py
+      run: pyinstaller --windowed --noconfirm --name "SD Prompt Reader" --add-data "sd_prompt_reader/resources:sd_prompt_reader/resources" main.py
 
     - name: Zip macOS App
       if: matrix.os == 'macos-latest'
